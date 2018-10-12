@@ -45,3 +45,30 @@ def get_coco_dataset():
     ]
     ds.classes = {i: name for i, name in enumerate(classes)}
     return ds
+
+
+def get_ade20k_dataset():
+    """A dummy ADE20K dataset that includes only the 'classes' field."""
+    ds = AttrDict()
+    classes = [
+        '__background__', 'bed', 'windowpane', 'cabinet', 'person', 'door',
+        'table', 'curtain', 'chair', 'car', 'painting', 'sofa', 'shelf',
+        'mirror', 'armchair', 'seat', 'fence', 'desk', 'wardrobe', 'lamp',
+        'bathtub', 'railing', 'cushion', 'box', 'column', 'signboard',
+        'chest of drawer', 'counter', 'sink', 'fireplace', 'refrigerator',
+        'stairs', 'case', 'pool table', 'pillow', 'screen door', 'bookcase',
+        'coffee table', 'toilet', 'flower', 'book', 'bench', 'countertop',
+        'stove', 'palm', 'kitchen island', 'computer', 'swivel chair',
+        'boat', 'arcade machine', 'bus', 'towel', 'light', 'truck',
+        'chandelier', 'awning', 'streetlight', 'booth', 'television',
+        'airplane', 'apparel', 'pole', 'bannister', 'ottoman',
+        'bottle', 'van', 'ship', 'fountain', 'washer', 'plaything', 'stool',
+        'barrel', 'basket', 'bag', 'minibike', 'oven', 'ball', 'food',
+        'step', 'trade name', 'microwave', 'pot', 'animal', 'bicycle',
+        'dishwasher', 'screen', 'sculpture', 'hood', 'sconce', 'vase',
+        'traffic light', 'tray', 'ashcan', 'fan', 'plate', 'monitor',
+        'bulletin board', 'radiator', 'glass', 'clock', 'flag'
+    ]
+    ds.classes = {i: name for i, name in enumerate(classes)}
+    return ds
+

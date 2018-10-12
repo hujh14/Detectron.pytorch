@@ -17,6 +17,7 @@ matplotlib.use('Agg')
 
 import numpy as np
 import cv2
+import pickle
 
 import torch
 import torch.nn as nn
@@ -98,6 +99,9 @@ def main():
     elif args.dataset.startswith("keypoints_coco"):
         dataset = datasets.get_coco_dataset()
         cfg.MODEL.NUM_CLASSES = 2
+    elif args.dataset.startswith("ade20k"):
+        dataset = datasets.get_ade_dataset()
+        cfg.MODEL.NUM_CLASSES = len(dataset.classes)
     else:
         raise ValueError('Unexpected dataset name: {}'.format(args.dataset))
 
@@ -138,7 +142,11 @@ def main():
     num_images = len(imglist)
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir)
+    vis_dir = os.path.join(args.output_dir, "vis")
+    if not os.path.exists(vis_dir):
+        os.makedirs(vis_dir)
 
+    detections = {}
     for i in xrange(num_images):
         print('img', i)
         im = cv2.imread(imglist[i])
@@ -147,12 +155,13 @@ def main():
         timers = defaultdict(Timer)
 
         cls_boxes, cls_segms, cls_keyps = im_detect_all(maskRCNN, im, timers=timers)
+        detections[imglist[i]] = (cls_boxes, cls_segms, cls_keyps)
 
         im_name, _ = os.path.splitext(os.path.basename(imglist[i]))
         vis_utils.vis_one_image(
             im[:, :, ::-1],  # BGR -> RGB for visualization
             im_name,
-            args.output_dir,
+            vis_dir,
             cls_boxes,
             cls_segms,
             cls_keyps,
@@ -162,7 +171,8 @@ def main():
             thresh=0.7,
             kp_thresh=2
         )
-
+    with open(os.path.join(args.output_dir, 'detections.pkl'), 'wb') as f:
+        pickle.dump(detections, f)
     if args.merge_pdfs and num_images > 1:
         merge_out_path = '{}/results.pdf'.format(args.output_dir)
         if os.path.exists(merge_out_path):
