@@ -30,6 +30,8 @@ from utils.logging import setup_logging
 from utils.timer import Timer
 from utils.training_stats import TrainingStats
 
+import ade20k
+
 # Set up logging and load config options
 logger = setup_logging(__name__)
 logging.getLogger('roi_data.loader').setLevel(logging.INFO)
@@ -156,6 +158,9 @@ def main():
     elif args.dataset == "keypoints_coco2017":
         cfg.TRAIN.DATASETS = ('keypoints_coco_2017_train',)
         cfg.MODEL.NUM_CLASSES = 2
+    elif args.dataset == "ade20k":
+        cfg.TEST.DATASETS = ('ade20k_train',)
+        cfg.MODEL.NUM_CLASSES = 101
     else:
         raise ValueError("Unexpected args.dataset: {}".format(args.dataset))
 

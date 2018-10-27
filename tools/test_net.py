@@ -13,6 +13,7 @@ import _init_paths  # pylint: disable=unused-import
 from core.config import cfg, merge_cfg_from_file, merge_cfg_from_list, assert_and_infer_cfg
 from core.test_engine import run_inference
 import utils.logging
+
 import ade20k
 
 # OpenCL may be enabled by default in OpenCV3; disable it because it's not
@@ -94,12 +95,9 @@ if __name__ == '__main__':
     elif args.dataset == "keypoints_coco2017":
         cfg.TEST.DATASETS = ('keypoints_coco_2017_val',)
         cfg.MODEL.NUM_CLASSES = 2
-    elif args.dataset == "ade20k_train":
-        cfg.TEST.DATASETS = ('ade20k_train',)
-        cfg.MODEL.NUM_CLASSES = 81
-    elif args.dataset == "ade20k_val":
+    elif args.dataset == "ade20k":
         cfg.TEST.DATASETS = ('ade20k_val',)
-        cfg.MODEL.NUM_CLASSES = 81
+        cfg.MODEL.NUM_CLASSES = 101
     else:  # For subprocess call
         assert cfg.TEST.DATASETS, 'cfg.TEST.DATASETS shouldn\'t be empty'
     assert_and_infer_cfg()
