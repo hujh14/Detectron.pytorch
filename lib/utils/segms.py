@@ -271,3 +271,30 @@ def rle_masks_to_boxes(masks):
     boxes[i, :] = (x0, y0, x1, y1)
 
   return boxes, np.where(keep)[0]
+
+def segms_to_boxes(segms):
+  if len(segms) == 0:
+    return []
+
+  if contains_dict(segms):
+    return rle_masks_to_boxes(segms)[0] # Not sure why this returns as a tuple
+  else:
+    return polys_to_boxes(segms)
+
+
+def segm_to_mask_wrt_box(segm, box, M):
+  if contains_dict(segm):
+    return rle_mask_to_mask_wrt_box(segm, box, M)
+  else:
+    return polys_to_mask_wrt_box(segm, box, M)
+
+
+def contains_dict(l):
+  # This is needed because the code is very inconsistent with lists of segmentations
+  if isinstance(l, dict):
+    return True
+  elif isinstance(l, list) and len(l) > 0:
+    return contains_dict(l[0])
+  else:
+    return False
+
