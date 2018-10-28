@@ -140,7 +140,7 @@ def main():
 
     detections = {}
     for i, im_name in enumerate(im_list):
-        print("Mask-RCNN image {} / {} : {}".format(i+1,len(im_list), im_name))
+        print("Mask-RCNN {} / {} : {}".format(i+1,len(im_list), im_name))
         img_path = os.path.join(args.im_dir, im_name)
         im = cv2.imread(img_path)
         assert im is not None
@@ -148,7 +148,7 @@ def main():
         timers = defaultdict(Timer)
 
         cls_boxes, cls_segms, cls_keyps = im_detect_all(maskRCNN, im, timers=timers)
-        detections[im_name = (cls_boxes, cls_segms, cls_keyps)
+        detections[im_name] = (cls_boxes, cls_segms, cls_keyps)
 
         name, _ = os.path.splitext(os.path.basename(im_name))
         vis_utils.vis_one_image(
