@@ -68,7 +68,8 @@ def add_mask_rcnn_blobs(blobs, sampled_boxes, roidb, im_scale, batch_idx):
             roi_fg = rois_fg[i]
             # Rasterize the portion of the polygon mask within the given fg roi
             # to an M x M binary image
-            mask = segm_utils.polys_to_mask_wrt_box(poly_gt, roi_fg, M)
+            mask = segm_utils.segm_to_mask_wrt_box(poly_gt, roi_fg, M)
+            # mask = segm_utils.polys_to_mask_wrt_box(poly_gt, roi_fg, M)
             mask = np.array(mask > 0, dtype=np.int32)  # Ensure it's binary
             masks[i, :] = np.reshape(mask, M**2)
     else:  # If there are no fg masks (it does happen)
