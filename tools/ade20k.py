@@ -9,11 +9,11 @@ DATASETS["ade20k_train"] = {
     IM_DIR:
         _DATA_DIR + '/ade20k/images',
     ANN_FN:
-        _DATA_DIR + '/ade20k/annotations/instances/ade20k_train_annotations.json',
+        _DATA_DIR + '/ade20k/annotations/instances_ade20k_train.json',
 }
 DATASETS["ade20k_val"] = {
     IM_DIR:
         _DATA_DIR + '/ade20k/images',
     ANN_FN:
-        _DATA_DIR + '/ade20k/annotations/instances/ade20k_val_annotations.json',
+        _DATA_DIR + '/ade20k/annotations/instances_ade20k_val.json',
 }

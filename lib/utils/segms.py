@@ -45,6 +45,8 @@ def flip_segms(segms, height, width):
       # COCO API showAnns function.
       rle = mask_util.frPyObjects([rle], height, width)
     mask = mask_util.decode(rle)
+    if (np.ndim(mask) == 2):
+        mask = mask[:, :, np.newaxis]
     mask = mask[:, ::-1, :]
     rle = mask_util.encode(np.array(mask, order='F', dtype=np.uint8))
     return rle
