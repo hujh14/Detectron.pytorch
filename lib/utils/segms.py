@@ -27,6 +27,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import numpy as np
+import cv2
 
 import pycocotools.mask as mask_util
 
@@ -114,6 +115,16 @@ def polys_to_mask_wrt_box(polygons, box, M):
   # Flatten in case polygons was a list
   mask = np.sum(mask, axis=2)
   mask = np.array(mask > 0, dtype=np.float32)
+  return mask
+
+def rle_mask_to_mask_wrt_box(rle_mask, box, M):
+  x0, y0, x1, y1 = box.astype(int)
+  w = np.maximum(x1-x0, 1)
+  h = np.maximum(y1-y0, 1)
+
+  mask = np.array(mask_util.decode(rle_mask), dtype=np.float32)
+  mask = mask[y0:y0+h, x0:x0+w]
+  mask = cv2.resize(mask, dsize=(M, M), interpolation=cv2.INTER_NEAREST)
   return mask
 
 
@@ -269,6 +280,7 @@ def rle_masks_to_boxes(masks):
     boxes[i, :] = (x0, y0, x1, y1)
 
   return boxes, np.where(keep)[0]
+
 
 def segms_to_boxes(segms):
   if len(segms) == 0:
