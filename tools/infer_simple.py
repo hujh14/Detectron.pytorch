@@ -62,18 +62,9 @@ def parse_args():
     parser.add_argument(
         '--load_detectron', help='path to the detectron weight pickle file')
 
-    parser.add_argument(
-        '--image_dir',
-        help='directory to load images for demo')
-    parser.add_argument(
-        '--images', nargs='+',
-        help='images to infer. Must not use with --image_dir')
-    parser.add_argument(
-        '--output_dir',
-        help='directory to save demo results',
-        default="infer_outputs")
-    parser.add_argument(
-        '--merge_pdfs', type=distutils.util.strtobool, default=True)
+    parser.add_argument('-l', '--im_list', type=str, default=None)
+    parser.add_argument('-d', '--im_dir', type=str, default=None)
+    parser.add_argument('-o', '--output_dir', type=str,  default=None)
 
     args = parser.parse_args()
 
@@ -135,32 +126,34 @@ def main():
                                  minibatch=True, device_ids=[0])  # only support single GPU
 
     maskRCNN.eval()
-    if args.image_dir:
-        imglist = misc_utils.get_imagelist_from_dir(args.image_dir)
-    else:
-        imglist = args.images
-    num_images = len(imglist)
+
+    im_list = []
+    with open(args.im_list) as f:
+        im_list = f.read().splitlines()
+
+    vis_dir = os.path.join(args.output_dir, "vis")
+
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir)
-    vis_dir = os.path.join(args.output_dir, "vis")
     if not os.path.exists(vis_dir):
         os.makedirs(vis_dir)
 
     detections = {}
-    for i in xrange(num_images):
-        print('img', i)
-        im = cv2.imread(imglist[i])
+    for i, im_name in enumerate(im_list):
+        print("Mask-RCNN image {} / {} : {}".format(i+1,len(im_list), im_name))
+        img_path = os.path.join(args.im_dir, im_name)
+        im = cv2.imread(img_path)
         assert im is not None
 
         timers = defaultdict(Timer)
 
         cls_boxes, cls_segms, cls_keyps = im_detect_all(maskRCNN, im, timers=timers)
-        detections[imglist[i]] = (cls_boxes, cls_segms, cls_keyps)
+        detections[im_name = (cls_boxes, cls_segms, cls_keyps)
 
-        im_name, _ = os.path.splitext(os.path.basename(imglist[i]))
+        name, _ = os.path.splitext(os.path.basename(im_name))
         vis_utils.vis_one_image(
             im[:, :, ::-1],  # BGR -> RGB for visualization
-            im_name,
+            name,
             vis_dir,
             cls_boxes,
             cls_segms,
@@ -173,13 +166,6 @@ def main():
         )
     with open(os.path.join(args.output_dir, 'detections.pkl'), 'wb') as f:
         pickle.dump(detections, f)
-    if args.merge_pdfs and num_images > 1:
-        merge_out_path = '{}/results.pdf'.format(args.output_dir)
-        if os.path.exists(merge_out_path):
-            os.remove(merge_out_path)
-        command = "pdfunite {}/*.pdf {}".format(args.output_dir,
-                                                merge_out_path)
-        subprocess.call(command, shell=True)
 
 
 if __name__ == '__main__':
