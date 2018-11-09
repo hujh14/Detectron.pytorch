@@ -81,9 +81,6 @@ def main():
     print('Called with args:')
     print(args)
 
-    assert args.image_dir or args.images
-    assert bool(args.image_dir) ^ bool(args.images)
-
     if args.dataset.startswith("coco"):
         dataset = datasets.get_coco_dataset()
         cfg.MODEL.NUM_CLASSES = len(dataset.classes)

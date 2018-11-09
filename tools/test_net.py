@@ -97,6 +97,7 @@ if __name__ == '__main__':
         cfg.MODEL.NUM_CLASSES = 2
     elif args.dataset == "ade20k":
         cfg.TEST.DATASETS = ('ade20k_val',)
+        cfg.TEST.FORCE_JSON_DATASET_EVAL = True
         cfg.MODEL.NUM_CLASSES = 101
     else:  # For subprocess call
         assert cfg.TEST.DATASETS, 'cfg.TEST.DATASETS shouldn\'t be empty'
